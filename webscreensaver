@@ -307,9 +307,8 @@ class WebHacks(object):
 					# UserScripts.inject_css("iframe { padding: 0 !important; } body { background: black; }")
 		         # ]
 			            # ),
-		Hack('picsum', url='https://picsum.photos/1920/1200',
-			           #scripts=[ UserScripts.inject_refreshPage("15") ]
-			           ),
+		#Hack('picsum', url='https://picsum.photos/1920/1200'),
+		Hack('unsplash', url='https://source.unsplash.com/1920x1200/?wallpapers'),
 	)
 	
 	@classmethod
