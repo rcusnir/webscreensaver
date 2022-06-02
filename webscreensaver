@@ -128,7 +128,7 @@ class WebScreensaver(object):
 		Handler for browser page load events.
 		This will be executed for every frame within the browser.
 		'''
-
+		        
 		if not self.scripts:
 			return
 
@@ -216,8 +216,35 @@ class UserScripts(object):
 			})();
 		'''
 		return script % css_str
-
-
+	
+	@classmethod
+	def inject_refreshPage(cls, css_str):
+		script = '''
+			(function() {
+				var node = document.createElement("meta");				
+				node.setAttribute('http-equiv','refresh');
+				node.setAttribute('content','%s');				 				
+				document.head.appendChild(node);
+				
+				var node = document.createElement("meta");				
+				node.setAttribute('http-equiv','Cache-Control');
+				node.setAttribute('content','no-cache, no-store, must-revalidate');
+				document.head.appendChild(node);
+				
+				var node = document.createElement("meta");				
+				node.setAttribute('http-equiv','Pragma');
+				node.setAttribute('content','no-cache');
+				document.head.appendChild(node);
+				
+				var node = document.createElement("meta");				
+				node.setAttribute('http-equiv','Expires');
+				node.setAttribute('content','0');
+				document.head.appendChild(node);
+				
+			})();
+		'''
+		return script % css_str
+		
 class WebHacks(object):
 	'''
 	A collection of neat HTML5/WebGL demos
@@ -228,8 +255,8 @@ class WebHacks(object):
 
 		def __init__(self, name, url=None, scripts=None):
 			self.name, self.url, self.scripts = name, url, scripts
-
-	hacks = (
+	'''
+	hacks = (	
 		Hack('starfield',
 			url='http://www.chiptune.com/starfield/starfield.html',
 			scripts=[ UserScripts.remove_tags("iframe") ]
@@ -271,8 +298,20 @@ class WebHacks(object):
 		Hack('conductor',		url='http://www.mta.me/'),
 
 		Hack('flying-toasters',	url='https://bryanbraun.github.io/after-dark-css/all/flying-toasters.html'),
+		Hack('picsum',		url='https://picsum.photos/1920/1200'),
 	)
-
+	'''
+	hacks = (
+		 # Hack('loremflickr',		url='file:///home/rcusnir/work/PERSONAL/webscreensaver/test.html',
+		         # scripts=[ 
+					# UserScripts.inject_css("iframe { padding: 0 !important; } body { background: black; }")
+		         # ]
+			            # ),
+		Hack('picsum', url='https://picsum.photos/1920/1200',
+			           #scripts=[ UserScripts.inject_refreshPage("15") ]
+			           ),
+	)
+	
 	@classmethod
 	def items(cls):
 		return [x for x in cls.hacks]
@@ -308,6 +347,7 @@ class WebHacks(object):
 			'inject_css': UserScripts.inject_css,
 			'remove_ids': UserScripts.remove_ids,
 			'remove_tags': UserScripts.remove_tags,
+			'inject_refreshPage': UserScripts.inject_refreshPage,
 		}
 
 		url = section['url']
@@ -383,7 +423,7 @@ if __name__ == "__main__":
 		WebHacks.print_list()
 		sys.exit(0)
 
-	url, scripts = None, None
+	url, scripts = None, None	
 
 	if args.url:
 		url = args.url
